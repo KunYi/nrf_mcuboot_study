@@ -1,0 +1,90 @@
+# Memory Partition Configuration
+# This configuration defines the memory layout for a system using MCUboot
+# All sizes and addresses are in hexadecimal format
+
+# MCUboot Bootloader Configuration
+# The bootloader is placed at the start of flash memory
+mcuboot:
+  address: 0x0                 # Start address of bootloader
+  size: 0xC000                 # Size: 48KB
+  region: flash_primary        # Located in primary flash
+  placement:
+    before:
+      - mcuboot_primary
+
+mcuboot_pad:                   # Pad for signature
+  address: 0xC000
+  size: 0x200                  # Size: 512Byte, signature size
+  region: flash_primary
+
+# Main Application
+app:
+  address: 0xC200             # Start after bootloader
+  size: 0x75000               # Size: 468KB
+  region: flash_primary
+
+# Primary Partition (includes pad and app)
+mcuboot_primary:
+  address: 0xC000
+  size: 0x75200              # Size: 468KB + 512Byte
+  region: flash_primary
+  orig_span: &primary_span
+    - app
+    - mcuboot_pad
+  span: *primary_span
+  sharers: 0x1
+  placement:
+    after:
+      - mcuboot
+    before:
+      - mcuboot_secondary
+
+# Primary Application Slot
+mcuboot_primary_app:
+  address: 0xC200             # Start after bootloader
+  size: 0x75000              # Size: 468KB
+  region: flash_primary
+  orig_span: &primary_app_span
+    - app
+  span: *primary_app_span
+  placement:
+    after:
+      - mcuboot
+    before:
+      - mcuboot_secondary
+
+# Secondary Partition (for firmware updates)
+mcuboot_secondary:
+  address: 0x81200
+  size: 0x75000              # Same size as primary
+  region: flash_primary
+  placement:
+    after:
+      - mcuboot_primary
+    before:
+      - settings_storage
+
+# Settings storage for MCUboot
+settings_storage:
+  address: 0xF6200
+  size: 0x1E00          # 7.5KB for settings
+  region: flash_primary
+  placement:
+    before:
+      - app_storage
+
+# Application storage
+app_storage:
+  address: 0xF8000
+  size: 0x8000          # 32KB for app storage
+  region: flash_primary
+  placement:
+    before:
+      - remaining_space
+
+# RAM Configuration
+sram_primary:
+  address: 0x20000000        # Start of RAM
+  size: 0x40000             # Size: 256KB
+  end_address: 0x20040000
+  region: sram_primary

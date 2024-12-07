@@ -1,0 +1,47 @@
+# Build directories
+build/
+_build/
+out/
+debug/
+release/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Compiled files
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+
+# Dependencies
+external/
+third_party/
+
+# Debug files
+*.log
+*.dmp
+core
+
+# Project specific
+signing_key.pem
+*.key
+*.crt
+*.der
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Generated files
+sdkconfig
+sdkconfig.old
+*.pyc
+__pycache__/
