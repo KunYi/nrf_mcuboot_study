@@ -14,9 +14,12 @@ This project implements a secure over-the-air (OTA) update system for Nordic nRF
 
 The nRF52840 system memory is organized into several partitions:
 
-- **MCUboot** (0x0 - 0xc000): Secure bootloader
-- **Primary Slot** (0xc200 - 0x86000): Active firmware
-- **Secondary Slot** (0x86000 - 0x100000): OTA update storage
+- **MCUboot** (0x0 - 0xC000): Secure bootloader (48KB)
+- **MCUboot Pad** (0xC000 - 0xC200): Signature pad (512B)
+- **Primary Slot** (0xC200 - 0x81200): Active firmware (468KB)
+- **Secondary Slot** (defined elsewhere): OTA update storage
+
+This configuration ensures that the bootloader and application are properly aligned and that there is space for OTA updates.
 
 ## Features
 
@@ -39,6 +42,7 @@ The nRF52840 system memory is organized into several partitions:
 ```bash
 west build --pristine always --board nrf52840dk/nrf52840  --sysbuild
 ```
+
 ## OTA Update Process
 
 1. New firmware is downloaded to the secondary partition
